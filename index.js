@@ -88,6 +88,30 @@ export default () => {
     });
 
     (async () => {
+        const u = `${baseUrl}target.glb`; 
+        let gltf = await new Promise((accept, reject) => {
+            const {gltfLoader} = useLoaders();
+            gltfLoader.load(u, accept, function onprogress() {}, reject);        
+        });
+        app.add(gltf.scene);
+
+        app.traverse(o => {
+                  if(o.name === "Target3") {
+                    target3 = o;
+                  }
+                  o.castShadow = true;
+                });
+
+        
+        const physicsId = physics.addGeometry(gltf.scene);
+        physicsIds.push(physicsId);
+        target3.physicsId = physicsId;
+        target3.position.x = currentTravel;
+        app.updateMatrixWorld();
+        physics.setTransform(target3.physicsId);
+    })();
+
+    (async () => {
         const u = `${baseUrl}range.glb`; 
         let gltf = await new Promise((accept, reject) => {
             const {gltfLoader} = useLoaders();
@@ -104,9 +128,6 @@ export default () => {
                   }
                   if(o.name === "ButtonDown") {
                     buttonDown = o;
-                  }
-                  if(o.name === "Target3") {
-                    target3 = o;
                   }
                   o.castShadow = true;
                 });
@@ -163,6 +184,10 @@ export default () => {
         currentTravel = THREE.MathUtils.clamp(currentTravel, maxTravel, minTravel);
         target3.position.x = currentTravel;
         target3.updateMatrixWorld();
+
+        target3.physicsId.position.x = target3.position.x;
+        physics.setTransform(target3.physicsId);
+        target3.physicsId.updateMatrixWorld();
 
       }
 

@@ -1,4 +1,10 @@
 {
  "description": "voxel environment",
- "start_url": "index.js"
+ "start_url": "index.js",
+ "components": [
+   {
+     "key": "vincibility",
+     "value": "invincible"
+   }
+ ]
 }
